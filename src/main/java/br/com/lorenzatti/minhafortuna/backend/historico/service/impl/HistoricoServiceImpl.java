@@ -6,6 +6,7 @@ import br.com.lorenzatti.minhafortuna.backend.historico.service.HistoricoService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -15,7 +16,8 @@ public class HistoricoServiceImpl implements HistoricoService {
     private HistoricoRepository historicoRepository;
 
     @Override
-    public List<Historico> getHistorico(String sigla, String inicio, String fim) {
-        return historicoRepository.findAll();
+    public List<Historico> getHistorico(String sigla, Date inicio, Date fim) {
+        return historicoRepository.findBySiglaAndDataBetween(sigla, inicio, fim);
     }
+
 }

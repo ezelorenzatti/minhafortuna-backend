@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface HistoricoRepository extends JpaRepository<Historico, Long> {
 
-    List<Historico> findBySiglaAndDataBefore(String sigla, Date inicio, Date fim);
+    List<Historico> findBySiglaAndDataBetween(String sigla, Date inicio, Date fim);
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -16,6 +17,6 @@ public class Response<T> {
     private Boolean sucesso;
     private String mensagem;
     private T data;
-    private List<String> erros;
+    private List<String> erros = new ArrayList<>();
 
 }
