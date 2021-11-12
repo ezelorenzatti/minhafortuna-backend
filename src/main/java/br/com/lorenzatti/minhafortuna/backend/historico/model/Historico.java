@@ -1,5 +1,6 @@
 package br.com.lorenzatti.minhafortuna.backend.historico.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +23,7 @@ public class Historico implements Serializable {
     @Column(name = "SIGLA")
     private String sigla;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "DATA")
     private Date data;
 

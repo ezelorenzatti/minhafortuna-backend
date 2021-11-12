@@ -2,7 +2,8 @@ package br.com.lorenzatti.minhafortuna.backend.historico.controller;
 
 import br.com.lorenzatti.minhafortuna.backend.historico.model.Historico;
 import br.com.lorenzatti.minhafortuna.backend.historico.service.HistoricoService;
-import br.com.lorenzatti.minhafortuna.backend.shared.Response;
+import br.com.lorenzatti.minhafortuna.backend.shared.converter.DataConverter;
+import br.com.lorenzatti.minhafortuna.backend.shared.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,14 +19,17 @@ import java.util.List;
 public class HistoricoRestController {
 
     @Autowired
+    private DataConverter dataConverter;
+
+    @Autowired
     private HistoricoService historicoService;
 
     @GetMapping
     public ResponseEntity<Response> historico(@RequestParam(name = "sigla") String sigla, @RequestParam(name = "inicio") String inicio, @RequestParam(name = "fim") String fim) {
         Response<List<Historico>> response = new Response<>();
         response.setSucesso(true);
-        Date dataInicio = null;
-        Date dataFim = null;
+        Date dataInicio = dataConverter.toDate(inicio);
+        Date dataFim = dataConverter.toDate(fim);
         List<Historico> historico = historicoService.getHistorico(sigla, dataInicio, dataFim);
         response.setData(historico);
         return ResponseEntity.ok(response);

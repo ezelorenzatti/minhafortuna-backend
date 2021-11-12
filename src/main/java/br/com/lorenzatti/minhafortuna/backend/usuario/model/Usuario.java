@@ -1,6 +1,7 @@
 package br.com.lorenzatti.minhafortuna.backend.usuario.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.io.Serializable;
 public class Usuario implements Serializable {
 
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private Long id;
@@ -23,6 +25,7 @@ public class Usuario implements Serializable {
     @Column(name = "LOGIN")
     private String login;
 
+    @JsonIgnore
     @Column(name = "SENHA")
     private String senha;
 

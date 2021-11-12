@@ -2,7 +2,7 @@ package br.com.lorenzatti.minhafortuna.backend.ativo.controller;
 
 import br.com.lorenzatti.minhafortuna.backend.ativo.model.Ativo;
 import br.com.lorenzatti.minhafortuna.backend.ativo.service.impl.AtivoServiceImpl;
-import br.com.lorenzatti.minhafortuna.backend.shared.Response;
+import br.com.lorenzatti.minhafortuna.backend.shared.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;

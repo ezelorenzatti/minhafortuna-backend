@@ -9,4 +9,6 @@ public interface UsuarioService {
     Usuario salvar(Usuario usuario);
 
     Optional<Usuario> findByLogin(String login);
+
+    Optional<Usuario> getUsuarioById(Long id);
 }

@@ -1,9 +1,10 @@
 package br.com.lorenzatti.minhafortuna.backend.operacao.model;
 
-import br.com.lorenzatti.minhafortuna.backend.usuario.model.Usuario;
 import br.com.lorenzatti.minhafortuna.backend.ativo.model.Ativo;
 import br.com.lorenzatti.minhafortuna.backend.operacao.enums.EnumTipoOperacao;
 import br.com.lorenzatti.minhafortuna.backend.plataforma.model.Plataforma;
+import br.com.lorenzatti.minhafortuna.backend.usuario.model.Usuario;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class Operacao implements Serializable {
     @Column(name = "ID")
     private Long id;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "DATA", columnDefinition = "")
     private Date data;
 
@@ -38,8 +40,11 @@ public class Operacao implements Serializable {
     @Column(name = "QUANTIDADE")
     private Double quantidade;
 
-    @Column(name = "VALOR_TOTAL")
+    @Column(name = "VALOR")
     private Double valor;
+
+    @Column(name = "TOTAL")
+    private Double total;
 
     @Column(name = "TAXAS")
     private Double taxas;

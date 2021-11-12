@@ -4,9 +4,8 @@ import br.com.lorenzatti.minhafortuna.backend.security.JwtUser;
 import br.com.lorenzatti.minhafortuna.backend.security.JwtUserFactory;
 import br.com.lorenzatti.minhafortuna.backend.security.dto.JwtAuthenticationDto;
 import br.com.lorenzatti.minhafortuna.backend.security.dto.TokenDto;
-import br.com.lorenzatti.minhafortuna.backend.security.services.JwtUserDetailsServiceImpl;
 import br.com.lorenzatti.minhafortuna.backend.security.utils.JwtTokenUtil;
-import br.com.lorenzatti.minhafortuna.backend.shared.Response;
+import br.com.lorenzatti.minhafortuna.backend.shared.response.Response;
 import br.com.lorenzatti.minhafortuna.backend.usuario.model.Usuario;
 import br.com.lorenzatti.minhafortuna.backend.usuario.service.UsuarioService;
 import org.slf4j.Logger;
@@ -38,9 +37,6 @@ public class AuthenticationController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-
-    @Autowired
-    private JwtUserDetailsServiceImpl userDetailsService;
 
     @Autowired
     private UsuarioService usuarioService;

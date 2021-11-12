@@ -24,5 +24,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioRepository.findByLogin(login);
     }
 
-
+    @Override
+    public Optional<Usuario> getUsuarioById(Long id) {
+        return usuarioRepository.findById(id);
+    }
 }

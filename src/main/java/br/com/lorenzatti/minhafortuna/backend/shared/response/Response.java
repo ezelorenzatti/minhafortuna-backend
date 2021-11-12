@@ -1,4 +1,4 @@
-package br.com.lorenzatti.minhafortuna.backend.shared;
+package br.com.lorenzatti.minhafortuna.backend.shared.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

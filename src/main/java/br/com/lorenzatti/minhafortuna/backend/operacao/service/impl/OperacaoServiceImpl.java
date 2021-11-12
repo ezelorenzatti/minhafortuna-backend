@@ -6,14 +6,21 @@ import br.com.lorenzatti.minhafortuna.backend.operacao.service.OperacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OperacaoServiceImpl implements OperacaoService {
 
     @Autowired
-    private OperacaoRepository repository;
+    private OperacaoRepository operacaoRepository;
 
     @Override
     public Operacao salvar(Operacao operacao) {
-        return repository.save(operacao);
+        return operacaoRepository.save(operacao);
+    }
+
+    @Override
+    public List<Operacao> operacoes() {
+        return operacaoRepository.findAll();
     }
 }
