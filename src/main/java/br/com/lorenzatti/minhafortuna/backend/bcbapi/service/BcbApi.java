@@ -50,14 +50,17 @@ public class BcbApi {
 
     private static final String FECHAMENTO = "https://www4.bcb.gov.br/Download/fechamento/{DATA}.csv";
 
-    @Scheduled(cron = "0 0 1 * * *", zone = TIME_ZONE)
+    @Scheduled(cron = "0 1 0 * * *", zone = TIME_ZONE)
     public void atualizarReferencias() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date data = this.getDiaAnterior();
-        logger.info("Iniciando atualização de referências monetárias para " + sdf.format(data));
-        File fechamento = downloadFile(data);
-        cadastrarFechamento(fechamento);
-        logger.info("Atualização de referências monetárias concluída");
+        final Date data = this.getDiaAnterior();
+        try {
+            logger.info("Iniciando atualização de referências monetárias para " + sdf.format(data));
+            File fechamento = downloadFile(data);
+            cadastrarFechamento(fechamento);
+        } catch (Exception e) {
+            logger.info("Não há referências monetárias para " + sdf.format(data));
+        }
     }
 
     private void cadastrarFechamento(File fechamento) {
