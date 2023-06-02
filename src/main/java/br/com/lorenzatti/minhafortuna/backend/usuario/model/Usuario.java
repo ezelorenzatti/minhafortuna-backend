@@ -31,5 +31,11 @@ public class Usuario implements Serializable {
 
     @Column(name = "EMAIL")
     private String email;
+
+    @Column(name = "FONE")
+    private String fone;
+
+    @Transient
+    private String confirmarSenha;
 }
 
