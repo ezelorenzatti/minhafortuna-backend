@@ -13,13 +13,11 @@ public class JwtUser implements UserDetails {
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
-    private Boolean master;
 
-    public JwtUser(Long id, String username, String password, Boolean master) {
+    public JwtUser(Long id, String username, String password) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.master = master;
     }
 
     public Long getId() {
@@ -64,12 +62,6 @@ public class JwtUser implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-    public boolean isMaster() {
-        return master;
-    }
-
-    ;
 
 
 }

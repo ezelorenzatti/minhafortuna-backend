@@ -1,0 +1,223 @@
+{
+  "mockup": {
+    "controls": {
+      "control": [
+        {
+          "ID": "14",
+          "typeID": "__group__",
+          "zOrder": "0",
+          "measuredW": "992",
+          "measuredH": "767",
+          "w": "992",
+          "h": "767",
+          "x": "43",
+          "y": "21",
+          "children": {
+            "controls": {
+              "control": [
+                {
+                  "ID": "0",
+                  "typeID": "BrowserWindow",
+                  "zOrder": "0",
+                  "w": "992",
+                  "h": "767",
+                  "measuredW": "450",
+                  "measuredH": "400",
+                  "x": "0",
+                  "y": "0",
+                  "properties": {
+                    "text": "Minha Fortuna\nhttps://minhafortuna.lorenzatti.com.br"
+                  }
+                },
+                {
+                  "ID": "1",
+                  "typeID": "Button",
+                  "zOrder": "1",
+                  "w": "82",
+                  "h": "30",
+                  "measuredW": "61",
+                  "measuredH": "27",
+                  "x": "881",
+                  "y": "95",
+                  "properties": {
+                    "text": "Entrar",
+                    "href": {
+                      "ID": "08C6EEE2-A538-4A8C-965B-2F46E0D47240"
+                    }
+                  }
+                },
+                {
+                  "ID": "2",
+                  "typeID": "__group__",
+                  "zOrder": "2",
+                  "measuredW": "423",
+                  "measuredH": "64",
+                  "w": "423",
+                  "h": "64",
+                  "x": "445",
+                  "y": "89",
+                  "children": {
+                    "controls": {
+                      "control": [
+                        {
+                          "ID": "0",
+                          "typeID": "FieldSet",
+                          "zOrder": "0",
+                          "w": "423",
+                          "h": "64",
+                          "measuredW": "200",
+                          "measuredH": "170",
+                          "x": "0",
+                          "y": "0",
+                          "properties": {
+                            "text": "Período do Gráfico"
+                          }
+                        },
+                        {
+                          "ID": "1",
+                          "typeID": "DateChooser",
+                          "zOrder": "1",
+                          "w": "150",
+                          "measuredW": "112",
+                          "measuredH": "25",
+                          "x": "16",
+                          "y": "23",
+                          "properties": {
+                            "text": "01/01/2021"
+                          }
+                        },
+                        {
+                          "ID": "2",
+                          "typeID": "DateChooser",
+                          "zOrder": "2",
+                          "w": "150",
+                          "measuredW": "113",
+                          "measuredH": "25",
+                          "x": "182",
+                          "y": "23",
+                          "properties": {
+                            "text": "31/01/2021"
+                          }
+                        },
+                        {
+                          "ID": "3",
+                          "typeID": "Button",
+                          "zOrder": "3",
+                          "measuredW": "59",
+                          "measuredH": "27",
+                          "x": "348",
+                          "y": "22",
+                          "properties": {
+                            "text": "Filtrar"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "ID": "3",
+                  "typeID": "__group__",
+                  "zOrder": "3",
+                  "measuredW": "407",
+                  "measuredH": "66",
+                  "w": "407",
+                  "h": "66",
+                  "x": "16",
+                  "y": "87",
+                  "children": {
+                    "controls": {
+                      "control": [
+                        {
+                          "ID": "0",
+                          "typeID": "FieldSet",
+                          "zOrder": "0",
+                          "w": "407",
+                          "h": "66",
+                          "measuredW": "200",
+                          "measuredH": "170",
+                          "x": "0",
+                          "y": "0",
+                          "properties": {
+                            "text": "Par de Moedas"
+                          }
+                        },
+                        {
+                          "ID": "1",
+                          "typeID": "ComboBox",
+                          "zOrder": "1",
+                          "w": "180",
+                          "measuredW": "101",
+                          "measuredH": "27",
+                          "x": "16",
+                          "y": "23",
+                          "properties": {
+                            "text": "USD - Dolar"
+                          }
+                        },
+                        {
+                          "ID": "2",
+                          "typeID": "ComboBox",
+                          "zOrder": "2",
+                          "w": "180",
+                          "measuredW": "132",
+                          "measuredH": "27",
+                          "x": "211",
+                          "y": "25",
+                          "properties": {
+                            "text": "BRL - Real Brasil"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "ID": "4",
+                  "typeID": "LineChart",
+                  "zOrder": "4",
+                  "w": "947",
+                  "h": "487",
+                  "measuredW": "187",
+                  "measuredH": "175",
+                  "x": "16",
+                  "y": "178"
+                },
+                {
+                  "ID": "5",
+                  "typeID": "Button",
+                  "zOrder": "5",
+                  "w": "82",
+                  "h": "30",
+                  "measuredW": "83",
+                  "measuredH": "27",
+                  "x": "881",
+                  "y": "125",
+                  "properties": {
+                    "text": "Cadastrar",
+                    "href": {
+                      "ID": "013FCEF7-BBE3-4F13-9725-EE490CCE7724"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "attributes": {
+      "name": "Home",
+      "order": 1000000,
+      "parentID": null,
+      "notes": null
+    },
+    "branchID": "Master",
+    "resourceID": "A38E1B04-514F-4F5D-9A5C-384F529A55BE",
+    "mockupH": "767",
+    "mockupW": "992",
+    "measuredW": "1035",
+    "measuredH": "788",
+    "version": "1.0"
+  }
+}

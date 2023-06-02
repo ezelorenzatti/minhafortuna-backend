@@ -3,6 +3,7 @@ package br.com.lorenzatti.minhafortuna.backend.security.controllers;
 import br.com.lorenzatti.minhafortuna.backend.security.JwtUser;
 import br.com.lorenzatti.minhafortuna.backend.security.JwtUserFactory;
 import br.com.lorenzatti.minhafortuna.backend.security.dto.JwtAuthenticationDto;
+import br.com.lorenzatti.minhafortuna.backend.security.dto.SignUpDto;
 import br.com.lorenzatti.minhafortuna.backend.security.dto.TokenDto;
 import br.com.lorenzatti.minhafortuna.backend.security.utils.JwtTokenUtil;
 import br.com.lorenzatti.minhafortuna.backend.shared.response.Response;
@@ -17,6 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,30 +50,59 @@ public class AuthenticationController {
             throws AuthenticationException {
         Response<TokenDto> response = new Response<TokenDto>();
 
-        if (result.hasErrors()) {
-            result.getAllErrors().forEach(error -> response.getErros().add(error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(response);
-        }
-
-        Optional<Usuario> usuarioOpt = usuarioService.findByLogin(authenticationDto.getLogin());
+        Optional<Usuario> usuarioOpt = usuarioService.findByEmail(authenticationDto.getEmail());
         Usuario usuario = null;
         JwtUser userDetails = null;
         if (usuarioOpt.isPresent()) {
             usuario = usuarioOpt.get();
             userDetails = JwtUserFactory.create(usuario);
         } else {
-            response.getErros().add("Usuário não encontrado, acesso não permitido");
+            response.setError("Usuário não encontrado, acesso não permitido");
             return ResponseEntity.badRequest().body(response);
         }
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                authenticationDto.getLogin(), authenticationDto.getSenha()));
+                authenticationDto.getEmail(), authenticationDto.getSenha()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = jwtTokenUtil.obterToken(userDetails, usuario);
         response.setData(new TokenDto(token));
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/signup")
+    public ResponseEntity<Response<TokenDto>> signUp(@RequestBody SignUpDto signUpDto) {
+        Optional<Usuario> usuarioOpt = usuarioService.findByEmail(signUpDto.getEmail());
+        Response<TokenDto> response = new Response<TokenDto>();
+
+        if (usuarioOpt.isPresent()) {
+            response.setError("Não foi possível finalizar, email já cadastrado !");
+            return ResponseEntity.badRequest().body(response);
+        } else {
+            if (!signUpDto.getSenha().equals(signUpDto.getConfirmarSenha())) {
+                response.setError("Não foi possível finalizar, senha e confirmação de senha inválidas !");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            Usuario usuario = new Usuario();
+            usuario.setNome(signUpDto.getNome());
+            usuario.setEmail(signUpDto.getEmail());
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            usuario.setSenha(passwordEncoder.encode(signUpDto.getSenha()));
+
+            usuarioService.salvar(usuario);
+
+            JwtUser userDetails = JwtUserFactory.create(usuario);
+
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    signUpDto.getEmail(), signUpDto.getSenha()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            String token = jwtTokenUtil.obterToken(userDetails, usuario);
+            response.setData(new TokenDto(token));
+            return ResponseEntity.ok(response);
+        }
     }
 
 
@@ -85,12 +117,10 @@ public class AuthenticationController {
         }
 
         if (!token.isPresent()) {
-            response.getErros().add("Token não informado");
+            response.setError("Token não informado");
+            return ResponseEntity.badRequest().body(response);
         } else if (!jwtTokenUtil.tokenValido(token.get())) {
-            response.getErros().add("Token inválido ou expirado.");
-        }
-
-        if (!response.getErros().isEmpty()) {
+            response.setError("Token inválido ou expirado.");
             return ResponseEntity.badRequest().body(response);
         }
 

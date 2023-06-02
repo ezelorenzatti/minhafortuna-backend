@@ -3,18 +3,18 @@ package br.com.lorenzatti.minhafortuna.backend.security.dto;
 
 public class JwtAuthenticationDto {
 
-    private String login;
+    private String email;
     private String senha;
 
     public JwtAuthenticationDto() {
     }
 
-    public String getLogin() {
-        return login;
+    public String getEmail() {
+        return email;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getSenha() {
@@ -27,7 +27,7 @@ public class JwtAuthenticationDto {
 
     @Override
     public String toString() {
-        return "JwtAuthenticationRequestDto [login=" + login + ", senha=" + senha + "]";
+        return "JwtAuthenticationRequestDto [email=" + email + ", senha=" + senha + "]";
     }
 
 }

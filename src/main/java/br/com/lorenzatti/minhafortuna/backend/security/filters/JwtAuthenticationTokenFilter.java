@@ -40,9 +40,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         if (token != null && token.startsWith(BEARER_PREFIX)) {
             token = token.substring(7);
         }
-        String login = jwtTokenUtil.getUsernameFromToken(token);
-        if (login != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Optional<Usuario> usuaro = usuarioService.findByLogin(login);
+        String email = jwtTokenUtil.getUsernameFromToken(token);
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            Optional<Usuario> usuaro = usuarioService.findByEmail(email);
             if (usuaro.isPresent()) {
                 UserDetails userDetails = JwtUserFactory.create(usuaro.get());
                 if (jwtTokenUtil.tokenValido(token)) {

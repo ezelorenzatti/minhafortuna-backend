@@ -20,8 +20,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Optional<Usuario> findByLogin(String login) {
-        return usuarioRepository.findByLogin(login);
+    public Optional<Usuario> findByEmail(String email) {
+        return usuarioRepository.findByEmail(email);
     }
 
     @Override

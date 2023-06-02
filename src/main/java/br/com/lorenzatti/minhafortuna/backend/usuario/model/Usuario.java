@@ -22,9 +22,6 @@ public class Usuario implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "LOGIN")
-    private String login;
-
     @JsonIgnore
     @Column(name = "SENHA")
     private String senha;

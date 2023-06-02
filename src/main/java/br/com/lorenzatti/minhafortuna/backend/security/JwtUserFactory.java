@@ -8,7 +8,7 @@ public class JwtUserFactory {
     }
 
     public static JwtUser create(Usuario usuario) {
-        return new JwtUser(usuario.getId(), usuario.getEmail(), usuario.getSenha(), true);
+        return new JwtUser(usuario.getId(), usuario.getEmail(), usuario.getSenha());
     }
 
 }

@@ -17,6 +17,6 @@ public class Response<T> {
     private Boolean sucesso;
     private String mensagem;
     private T data;
-    private List<String> erros = new ArrayList<>();
+    private String error;
 
 }
