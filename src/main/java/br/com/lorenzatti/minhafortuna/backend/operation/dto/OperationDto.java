@@ -1,12 +1,9 @@
 package br.com.lorenzatti.minhafortuna.backend.operation.dto;
 
 import br.com.lorenzatti.minhafortuna.backend.operation.enums.EnumOperationType;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Date;
 
 @NoArgsConstructor
 @Getter
@@ -23,7 +20,7 @@ public class OperationDto {
     private Double unitValue;
     private Double total;
     private Double taxes;
-    private Long plataformId;
+    private Long exchangeId;
     private String plataformName;
     private String color;
     private String lastValueDate;

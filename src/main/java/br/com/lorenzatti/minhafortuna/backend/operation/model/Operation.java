@@ -2,7 +2,7 @@ package br.com.lorenzatti.minhafortuna.backend.operation.model;
 
 import br.com.lorenzatti.minhafortuna.backend.currency.model.Currency;
 import br.com.lorenzatti.minhafortuna.backend.operation.enums.EnumOperationType;
-import br.com.lorenzatti.minhafortuna.backend.plataform.model.Plataform;
+import br.com.lorenzatti.minhafortuna.backend.plataform.model.Exchange;
 import br.com.lorenzatti.minhafortuna.backend.user.model.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,8 +52,8 @@ public class Operation implements Serializable {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Plataform.class)
-    @JoinColumn(name = "PLATAFORM_ID")
-    private Plataform plataform;
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Exchange.class)
+    @JoinColumn(name = "EXCHANGE_ID")
+    private Exchange exchange;
 
 }

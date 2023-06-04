@@ -8,8 +8,8 @@ import br.com.lorenzatti.minhafortuna.backend.operation.dto.OperationDto;
 import br.com.lorenzatti.minhafortuna.backend.operation.enums.EnumOperationType;
 import br.com.lorenzatti.minhafortuna.backend.operation.model.Operation;
 import br.com.lorenzatti.minhafortuna.backend.operation.service.OperationService;
-import br.com.lorenzatti.minhafortuna.backend.plataform.model.Plataform;
-import br.com.lorenzatti.minhafortuna.backend.plataform.service.PlataformService;
+import br.com.lorenzatti.minhafortuna.backend.plataform.model.Exchange;
+import br.com.lorenzatti.minhafortuna.backend.plataform.service.ExchangeService;
 import br.com.lorenzatti.minhafortuna.backend.security.JwtUser;
 import br.com.lorenzatti.minhafortuna.backend.shared.converter.DataConverter;
 import br.com.lorenzatti.minhafortuna.backend.shared.response.Response;
@@ -35,7 +35,7 @@ public class OperationRestController {
     private UserService userService;
 
     @Autowired
-    private PlataformService plataformService;
+    private ExchangeService exchangeService;
 
     @Autowired
     private CurrencyService currencyService;
@@ -68,9 +68,9 @@ public class OperationRestController {
                 operation.setUser(userOpt.get());
             }
 
-            Optional<Plataform> plataformOpt = plataformService.getPlataformById(operationDto.getPlataformId());
+            Optional<Exchange> plataformOpt = exchangeService.getExchangeById(operationDto.getExchangeId());
             if (plataformOpt.isPresent()) {
-                operation.setPlataform(plataformOpt.get());
+                operation.setExchange(plataformOpt.get());
             } else {
                 response.setError("Não foi possível continuar, plataforma não localizada!");
                 return ResponseEntity.badRequest().body(response);
@@ -127,8 +127,8 @@ public class OperationRestController {
                 operationDto.setTotal(operation.getTotal());
                 operationDto.setTaxes(operation.getTaxes());
                 operationDto.setUnitValue(operation.getUnitValue());
-                operationDto.setPlataformId(operation.getPlataform().getId());
-                operationDto.setPlataformName(operation.getPlataform().getName());
+                operationDto.setExchangeId(operation.getExchange().getId());
+                operationDto.setPlataformName(operation.getExchange().getName());
                 operationDto.setDate(dataConverter.toString(operation.getDate()));
 
                 History history = historyService.findLatestByCode(operation.getCurrency().getCode());
@@ -198,8 +198,8 @@ public class OperationRestController {
                     operation.setTaxes(taxValue);
 
                     Long plataformId = new Long(generateRandomNumber(1, 3));
-                    Optional<Plataform> plataform = plataformService.getPlataformById(plataformId);
-                    operation.setPlataform(plataform.get());
+                    Optional<Exchange> plataform = exchangeService.getExchangeById(plataformId);
+                    operation.setExchange(plataform.get());
 
                     operationService.save(operation);
 
@@ -239,7 +239,7 @@ public class OperationRestController {
                 operationDto.setTotal(operation.getTotal());
                 operationDto.setTaxes(operation.getTaxes());
                 operationDto.setUnitValue(operation.getUnitValue());
-                operationDto.setPlataformId(operation.getPlataform().getId());
+                operationDto.setExchangeId(operation.getExchange().getId());
                 operationDto.setDate(dataConverter.toString(operation.getDate()));
 
                 response.setData(operationDto);

@@ -11,8 +11,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity()
-@Table(name = "TB_PLATAFORM")
-public class Plataform implements Serializable {
+@Table(name = "TB_EXCHANGE")
+public class Exchange implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,7 +27,7 @@ public class Plataform implements Serializable {
 
     @Override
     public String toString() {
-        return "Plataform{" +
+        return "Exchange{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", url='" + url + '\'' +
