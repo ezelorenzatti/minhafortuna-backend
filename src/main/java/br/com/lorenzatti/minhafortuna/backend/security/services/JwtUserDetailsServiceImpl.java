@@ -1,8 +1,8 @@
 package br.com.lorenzatti.minhafortuna.backend.security.services;
 
 import br.com.lorenzatti.minhafortuna.backend.security.JwtUserFactory;
-import br.com.lorenzatti.minhafortuna.backend.usuario.model.Usuario;
-import br.com.lorenzatti.minhafortuna.backend.usuario.service.UsuarioService;
+import br.com.lorenzatti.minhafortuna.backend.user.model.User;
+import br.com.lorenzatti.minhafortuna.backend.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,11 +17,11 @@ import java.util.Optional;
 public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UserService usuarioService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Usuario> usuaro = usuarioService.findByEmail(username);
+        Optional<User> usuaro = usuarioService.findByEmail(username);
         if (usuaro.isPresent()) {
             return JwtUserFactory.create(usuaro.get());
         }

@@ -7,8 +7,8 @@ import br.com.lorenzatti.minhafortuna.backend.security.dto.SignUpDto;
 import br.com.lorenzatti.minhafortuna.backend.security.dto.TokenDto;
 import br.com.lorenzatti.minhafortuna.backend.security.utils.JwtTokenUtil;
 import br.com.lorenzatti.minhafortuna.backend.shared.response.Response;
-import br.com.lorenzatti.minhafortuna.backend.usuario.model.Usuario;
-import br.com.lorenzatti.minhafortuna.backend.usuario.service.UsuarioService;
+import br.com.lorenzatti.minhafortuna.backend.user.model.User;
+import br.com.lorenzatti.minhafortuna.backend.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +20,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -42,30 +42,28 @@ public class AuthenticationController {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UserService userService;
 
-    @PostMapping
-    public ResponseEntity<Response<TokenDto>> gerarTokenJwt(
-            @RequestBody JwtAuthenticationDto authenticationDto, BindingResult result)
-            throws AuthenticationException {
+    @PostMapping(value = "/signin")
+    public ResponseEntity<Response<TokenDto>> signIn(@RequestBody JwtAuthenticationDto authenticationDto) throws AuthenticationException {
         Response<TokenDto> response = new Response<TokenDto>();
 
-        Optional<Usuario> usuarioOpt = usuarioService.findByEmail(authenticationDto.getEmail());
-        Usuario usuario = null;
+        Optional<User> userOpt = userService.findByEmail(authenticationDto.getEmail());
+        User user = null;
         JwtUser userDetails = null;
-        if (usuarioOpt.isPresent()) {
-            usuario = usuarioOpt.get();
-            userDetails = JwtUserFactory.create(usuario);
+        if (userOpt.isPresent()) {
+            user = userOpt.get();
+            userDetails = JwtUserFactory.create(user);
         } else {
             response.setError("Usuário não encontrado, acesso não permitido");
             return ResponseEntity.badRequest().body(response);
         }
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                authenticationDto.getEmail(), authenticationDto.getSenha()));
+                authenticationDto.getEmail(), authenticationDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String token = jwtTokenUtil.obterToken(userDetails, usuario);
+        String token = jwtTokenUtil.getToken(userDetails, user);
         response.setData(new TokenDto(token));
 
         return ResponseEntity.ok(response);
@@ -73,33 +71,35 @@ public class AuthenticationController {
 
     @PostMapping(value = "/signup")
     public ResponseEntity<Response<TokenDto>> signUp(@RequestBody SignUpDto signUpDto) {
-        Optional<Usuario> usuarioOpt = usuarioService.findByEmail(signUpDto.getEmail());
+        Optional<User> userOpt = userService.findByEmail(signUpDto.getEmail());
         Response<TokenDto> response = new Response<TokenDto>();
-
-        if (usuarioOpt.isPresent()) {
-            response.setError("Não foi possível finalizar, email já cadastrado !");
+        if (userOpt.isPresent()) {
+            response.setError("Não foi possível cadastra, email já utilizado !");
             return ResponseEntity.badRequest().body(response);
         } else {
-            if (!signUpDto.getSenha().equals(signUpDto.getConfirmarSenha())) {
-                response.setError("Não foi possível finalizar, senha e confirmação de senha inválidas !");
+            if (!signUpDto.getPassword().equals(signUpDto.getConfirmPassword())) {
+                response.setError("Não foi possível cadastrar, senha e confirmação de senha inválidas !");
                 return ResponseEntity.badRequest().body(response);
             }
 
-            Usuario usuario = new Usuario();
-            usuario.setNome(signUpDto.getNome());
-            usuario.setEmail(signUpDto.getEmail());
+            User user = new User();
+            user.setName(signUpDto.getName());
+            user.setEmail(signUpDto.getEmail());
+            user.setPhone(signUpDto.getPhone());
+            user.setCreateDate(new Date());
+            user.setUpdateDate(new Date());
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            usuario.setSenha(passwordEncoder.encode(signUpDto.getSenha()));
+            user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
 
-            usuarioService.salvar(usuario);
+            userService.save(user);
 
-            JwtUser userDetails = JwtUserFactory.create(usuario);
+            JwtUser userDetails = JwtUserFactory.create(user);
 
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    signUpDto.getEmail(), signUpDto.getSenha()));
+                    signUpDto.getEmail(), signUpDto.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String token = jwtTokenUtil.obterToken(userDetails, usuario);
+            String token = jwtTokenUtil.getToken(userDetails, user);
             response.setData(new TokenDto(token));
             return ResponseEntity.ok(response);
         }
@@ -119,7 +119,7 @@ public class AuthenticationController {
         if (!token.isPresent()) {
             response.setError("Token não informado");
             return ResponseEntity.badRequest().body(response);
-        } else if (!jwtTokenUtil.tokenValido(token.get())) {
+        } else if (!jwtTokenUtil.validateToken(token.get())) {
             response.setError("Token inválido ou expirado.");
             return ResponseEntity.badRequest().body(response);
         }

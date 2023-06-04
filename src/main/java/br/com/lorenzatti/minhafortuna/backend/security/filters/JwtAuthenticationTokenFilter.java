@@ -3,8 +3,8 @@ package br.com.lorenzatti.minhafortuna.backend.security.filters;
 
 import br.com.lorenzatti.minhafortuna.backend.security.JwtUserFactory;
 import br.com.lorenzatti.minhafortuna.backend.security.utils.JwtTokenUtil;
-import br.com.lorenzatti.minhafortuna.backend.usuario.model.Usuario;
-import br.com.lorenzatti.minhafortuna.backend.usuario.service.UsuarioService;
+import br.com.lorenzatti.minhafortuna.backend.user.model.User;
+import br.com.lorenzatti.minhafortuna.backend.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UserService usuarioService;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -42,10 +42,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
         String email = jwtTokenUtil.getUsernameFromToken(token);
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Optional<Usuario> usuaro = usuarioService.findByEmail(email);
-            if (usuaro.isPresent()) {
-                UserDetails userDetails = JwtUserFactory.create(usuaro.get());
-                if (jwtTokenUtil.tokenValido(token)) {
+            Optional<User> user = usuarioService.findByEmail(email);
+            if (user.isPresent()) {
+                UserDetails userDetails = JwtUserFactory.create(user.get());
+                if (jwtTokenUtil.validateToken(token)) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);

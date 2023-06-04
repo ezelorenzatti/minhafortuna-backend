@@ -18,8 +18,21 @@ public class DataConverter {
         return date;
     }
 
+    public Date toDate(String toDate, String pattern) {
+        Date date = null;
+        try {
+            date = DataUtils.toDate(toDate, pattern);
+        } catch (DataParseException e) {
+        }
+        return date;
+    }
+
     public String toString(Date date) {
         return DataUtils.toString(date);
+    }
+
+    public String toString(Date date, String pattern) {
+        return DataUtils.toString(date, pattern);
     }
 
 }

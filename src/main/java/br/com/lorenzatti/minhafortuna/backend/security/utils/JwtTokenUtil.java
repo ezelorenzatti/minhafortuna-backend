@@ -1,6 +1,6 @@
 package br.com.lorenzatti.minhafortuna.backend.security.utils;
 
-import br.com.lorenzatti.minhafortuna.backend.usuario.model.Usuario;
+import br.com.lorenzatti.minhafortuna.backend.user.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -63,23 +63,23 @@ public class JwtTokenUtil {
         try {
             Claims claims = getClaimsFromToken(token);
             claims.put(CLAIM_KEY_CREATED, new Date());
-            refreshedToken = gerarToken(claims);
+            refreshedToken = buildToken(claims);
         } catch (Exception e) {
             refreshedToken = null;
         }
         return refreshedToken;
     }
 
-    public boolean tokenValido(String token) {
-        return !tokenExpirado(token);
+    public boolean validateToken(String token) {
+        return !isExpired(token);
     }
 
-    public String obterToken(UserDetails userDetails, Usuario usuario) {
+    public String getToken(UserDetails userDetails, User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
         claims.put(CLAIM_KEY_CREATED, new Date());
-        claims.put(CLAIM_KEY_NAME, usuario.getNome());
-        return gerarToken(claims);
+        claims.put(CLAIM_KEY_NAME, user.getName());
+        return buildToken(claims);
     }
 
     private Claims getClaimsFromToken(String token) {
@@ -92,20 +92,20 @@ public class JwtTokenUtil {
         return claims;
     }
 
-    private Date gerarDataExpiracao() {
+    private Date getExpirationDate() {
         return new Date(System.currentTimeMillis() + expiration * 1000);
     }
 
-    private boolean tokenExpirado(String token) {
-        Date dataExpiracao = this.getExpirationDateFromToken(token);
-        if (dataExpiracao == null) {
+    private boolean isExpired(String token) {
+        Date expirationDate = this.getExpirationDateFromToken(token);
+        if (expirationDate == null) {
             return false;
         }
-        return dataExpiracao.before(new Date());
+        return expirationDate.before(new Date());
     }
 
-    private String gerarToken(Map<String, Object> claims) {
-        return Jwts.builder().setClaims(claims).setExpiration(gerarDataExpiracao())
+    private String buildToken(Map<String, Object> claims) {
+        return Jwts.builder().setClaims(claims).setExpiration(getExpirationDate())
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 

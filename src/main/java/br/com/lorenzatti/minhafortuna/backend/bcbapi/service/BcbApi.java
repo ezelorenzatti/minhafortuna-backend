@@ -1,9 +1,11 @@
 package br.com.lorenzatti.minhafortuna.backend.bcbapi.service;
 
-import br.com.lorenzatti.minhafortuna.backend.ativo.model.Ativo;
-import br.com.lorenzatti.minhafortuna.backend.ativo.repository.AtivoRepository;
-import br.com.lorenzatti.minhafortuna.backend.historico.model.Historico;
-import br.com.lorenzatti.minhafortuna.backend.historico.repository.HistoricoRepository;
+import br.com.lorenzatti.minhafortuna.backend.currency.model.Currency;
+import br.com.lorenzatti.minhafortuna.backend.currency.repository.CurrencyRepository;
+import br.com.lorenzatti.minhafortuna.backend.history.model.History;
+import br.com.lorenzatti.minhafortuna.backend.history.repository.HistoryRepository;
+import br.com.lorenzatti.minhafortuna.backend.shared.exception.DataParseException;
+import br.com.lorenzatti.minhafortuna.backend.shared.utils.DataUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,94 +28,112 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 
 @Configuration
 @EnableScheduling
+@Service
 public class BcbApi {
 
     private Logger logger = LoggerFactory.getLogger(BcbApi.class);
 
     @Autowired
-    private AtivoRepository ativoRepository;
+    private CurrencyRepository currencyRepository;
 
     @Autowired
-    private HistoricoRepository historicoRepository;
+    private HistoryRepository historyRepository;
 
     private static final String TIME_ZONE = "America/Sao_Paulo";
 
     private static final String PATTERN = "yyyyMMdd";
 
-    private static final String FECHAMENTO = "https://www4.bcb.gov.br/Download/fechamento/{DATA}.csv";
+    private static final String URL_DAILY_VALUES = "https://www4.bcb.gov.br/Download/fechamento/{DATA}.csv";
 
-    @Scheduled(cron = "0 1 0 * * *", zone = TIME_ZONE)
-    public void atualizarReferencias() {
+    @Scheduled(cron = "0 3 0 * * *", zone = TIME_ZONE)
+    public void updateDailyValues() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        final Date data = this.getDiaAnterior();
+        final Date date = this.getDayBefore();
         try {
-            logger.info("Iniciando atualização de referências monetárias para " + sdf.format(data));
-            File fechamento = downloadFile(data);
-            cadastrarFechamento(fechamento);
+            logger.info("Iniciando atualizacaoo de referencias monetarias para " + sdf.format(date));
+            Optional<File> dailyValues = Optional.ofNullable(downloadFile(date));
+            if(dailyValues.isPresent()){
+                importDailyValues(dailyValues.get());
+            }
         } catch (Exception e) {
-            logger.info("Não há referências monetárias para " + sdf.format(data));
+            logger.info("Nao ha referencias monetarias para " + sdf.format(date));
         }
     }
 
-    private void cadastrarFechamento(File fechamento) {
-        List<Ativo> ativos = ativoRepository.findAll();
-        List<String> siglas = new ArrayList<>();
-        ativos.forEach(ativo -> siglas.add(ativo.getSigla()));
-        try (Stream<String> stream = Files.lines(Paths.get(fechamento.getAbsolutePath()), StandardCharsets.ISO_8859_1)) {
-            stream.map(this::buildHistorico)
-                    .filter(historico -> siglas.contains(historico.getSigla()))
-                    .forEach(historico -> historicoRepository.save(historico));
+    public void updatePeriodValues(Date startDate, Date endDate) throws Exception {
+        Date current = startDate;
+        while (current.getTime() < endDate.getTime()) {
+            Optional<File> dailyValues = Optional.ofNullable(downloadFile(current));
+            if(dailyValues.isPresent()){
+                importDailyValues(dailyValues.get());
+            }
+            current = incrementDay(current, 1);
+        }
+    }
+
+    private Date incrementDay(Date date, int numDays) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH, numDays);
+        return calendar.getTime();
+    }
+
+    private void importDailyValues(File dailyValues) throws Exception{
+        List<Currency> currencies = currencyRepository.findAll();
+        List<String> codes = new ArrayList<>();
+        currencies.forEach(currency -> codes.add(currency.getCode()));
+        try (Stream<String> stream = Files.lines(Paths.get(dailyValues.getAbsolutePath()), StandardCharsets.ISO_8859_1)) {
+            stream.map(this::buildHistory)
+                    .filter(history -> codes.contains(history.getCode()))
+                    .forEach(history -> historyRepository.save(history));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
-    private Historico buildHistorico(String line) {
+    private History buildHistory(String line) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String[] split = line.split(";");
-        Historico historico = new Historico();
+        History history = new History();
         try {
-            historico.setData(sdf.parse(split[0]));
-            historico.setSigla(split[3]);
-            historico.setCompra(Double.parseDouble(split[4].replace(",", ".")));
-            historico.setVenda(Double.parseDouble(split[5].replace(",", ".")));
+            history.setDate(sdf.parse(split[0]));
+            history.setCode(split[3]);
+            history.setBuy(Double.parseDouble(split[4].replace(",", ".")));
+            history.setSell(Double.parseDouble(split[5].replace(",", ".")));
         } catch (Exception e) {
         }
-        return historico;
+        return history;
     }
 
 
     private File downloadFile(Date data) {
-        String url = getUrl(data, FECHAMENTO);
+        String url = getUrl(data, URL_DAILY_VALUES);
         File file = null;
         try {
             RestTemplate restTemplate = getRestTemplate();
             file = restTemplate.execute(url, HttpMethod.GET, null, clientHttpResponse -> {
-                File ret = File.createTempFile("download", "csv");
+                File ret = File.createTempFile("download", ".csv");
                 StreamUtils.copy(clientHttpResponse.getBody(), new FileOutputStream(ret));
                 return ret;
             });
         } catch (Exception e) {
-            logger.info("Referências não disponíveis");
+            logger.info("Referencias nao disponiveis para " + url);
         }
         return file;
     }
 
-    private String getUrl(Date data, String url) {
+    private String getUrl(Date date, String url) {
         SimpleDateFormat sdf = new SimpleDateFormat(PATTERN);
-        return url.replace("{DATA}", sdf.format(data));
+        return url.replace("{DATA}", sdf.format(date));
     }
 
-    private Date getDiaAnterior() {
+    private Date getDayBefore() {
         Date data = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(data);

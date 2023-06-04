@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -61,8 +62,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.cors().configurationSource(httpServletRequest -> new CorsConfiguration().applyPermitDefaultValues());
         httpSecurity.csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
-                .antMatchers("/auth/**", "/configuration/security")
-                .permitAll().anyRequest().authenticated();
+                .antMatchers("/auth/**", "/configuration/security").permitAll()
+                .antMatchers(HttpMethod.GET, "/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/**").permitAll()
+                .antMatchers(HttpMethod.PUT, "/**").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .anyRequest().authenticated();
         httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
         httpSecurity.headers().cacheControl();
 
