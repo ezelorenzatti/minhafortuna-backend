@@ -19,6 +19,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
@@ -34,22 +36,32 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    private List<String> freeUris = Arrays.asList("/auth/signin", "/auth/signup");
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String token = request.getHeader(AUTH_HEADER);
-        if (token != null && token.startsWith(BEARER_PREFIX)) {
-            token = token.substring(7);
-        }
-        String email = jwtTokenUtil.getUsernameFromToken(token);
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Optional<User> user = usuarioService.findByEmail(email);
-            if (user.isPresent()) {
-                UserDetails userDetails = JwtUserFactory.create(user.get());
-                if (jwtTokenUtil.validateToken(token)) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (!freeUris.contains(request.getRequestURI())) {
+            String token = request.getHeader(AUTH_HEADER);
+            if (token != null && token.startsWith(BEARER_PREFIX)) {
+                token = token.substring(7);
+            }
+            String email = jwtTokenUtil.getUsernameFromToken(token);
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                Optional<User> user = usuarioService.findByEmail(email);
+                if (user.isPresent()) {
+                    UserDetails userDetails = JwtUserFactory.create(user.get());
+                    if (jwtTokenUtil.validateToken(token)) {
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                } else {
+                    response.sendError(401);
+                    return;
                 }
+            } else {
+                response.sendError(401);
+                return;
             }
         }
         chain.doFilter(request, response);

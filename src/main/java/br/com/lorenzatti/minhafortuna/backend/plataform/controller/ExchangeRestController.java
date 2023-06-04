@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,6 +29,16 @@ public class ExchangeRestController {
     @GetMapping
     public ResponseEntity<Response> exchanges() {
         Response<List<ExchangeDto>> response = new Response<>();
+        List<Exchange> exchanges = exchangeService.exchanges();
+        List<ExchangeDto> exchangeDtos = new ArrayList<>();
+        exchanges.forEach(exchange -> {
+            ExchangeDto exchangeDto = new ExchangeDto();
+            exchangeDto.setId(exchange.getId());
+            exchangeDto.setName(exchange.getName());
+            exchangeDto.setUrl(exchange.getUrl());
+            exchangeDtos.add(exchangeDto);
+        });
+        response.setData(exchangeDtos);
         response.setSuccess(true);
         return ResponseEntity.ok(response);
     }

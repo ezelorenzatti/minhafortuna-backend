@@ -21,7 +21,7 @@ public class OperationDto {
     private Double total;
     private Double taxes;
     private Long exchangeId;
-    private String plataformName;
+    private String exchangeName;
     private String color;
     private String lastValueDate;
     private Double lastValue;

@@ -108,42 +108,43 @@ public class OperationRestController {
             @RequestParam("endDate") String endDate,
             Authentication authentication) {
         Response<List<OperationDto>> response = new Response<>();
+        Optional<Authentication> authenticationOpt = Optional.ofNullable(authentication);
+        if(authenticationOpt.isPresent()){
+            JwtUser loggedUser = (JwtUser) authenticationOpt.get().getPrincipal();
+            Optional<User> userOpt = userService.getUserById(loggedUser.getId());
+            if (userOpt.isPresent()) {
+                Date start = dataConverter.toDate(startDate);
+                Date end = dataConverter.toDate(endDate);
+                List<OperationDto> operationDtos = new ArrayList<>();
+                List<Operation> operations = operationService.findAllByUserIdAndOperationTypeInAndDateBetween(loggedUser.getId(), operationTypes, start, end);
+                operations.forEach(operation -> {
+                    OperationDto operationDto = new OperationDto();
+                    operationDto.setId(operation.getId());
+                    operationDto.setOperationType(operation.getOperationType());
+                    operationDto.setCurrencyCode(operation.getCurrency().getCode());
+                    operationDto.setCurrencyName(operation.getCurrency().getName());
+                    operationDto.setColor(operation.getCurrency().getColor());
+                    operationDto.setAmount(operation.getAmount());
+                    operationDto.setTotal(operation.getTotal());
+                    operationDto.setTaxes(operation.getTaxes());
+                    operationDto.setUnitValue(operation.getUnitValue());
+                    operationDto.setExchangeId(operation.getExchange().getId());
+                    operationDto.setExchangeName(operation.getExchange().getName());
+                    operationDto.setDate(dataConverter.toString(operation.getDate()));
 
-        JwtUser loggedUser = (JwtUser) authentication.getPrincipal();
-        Optional<User> userOpt = userService.getUserById(loggedUser.getId());
-        if (userOpt.isPresent()) {
-            Date start = dataConverter.toDate(startDate);
-            Date end = dataConverter.toDate(endDate);
-            List<OperationDto> operationDtos = new ArrayList<>();
-            List<Operation> operations = operationService.findAllByUserIdAndOperationTypeInAndDateBetween(loggedUser.getId(), operationTypes, start, end);
-            operations.forEach(operation -> {
-                OperationDto operationDto = new OperationDto();
-                operationDto.setId(operation.getId());
-                operationDto.setOperationType(operation.getOperationType());
-                operationDto.setCurrencyCode(operation.getCurrency().getCode());
-                operationDto.setCurrencyName(operation.getCurrency().getName());
-                operationDto.setColor(operation.getCurrency().getColor());
-                operationDto.setAmount(operation.getAmount());
-                operationDto.setTotal(operation.getTotal());
-                operationDto.setTaxes(operation.getTaxes());
-                operationDto.setUnitValue(operation.getUnitValue());
-                operationDto.setExchangeId(operation.getExchange().getId());
-                operationDto.setPlataformName(operation.getExchange().getName());
-                operationDto.setDate(dataConverter.toString(operation.getDate()));
+                    History history = historyService.findLatestByCode(operation.getCurrency().getCode());
+                    Double lastValue = operation.getAmount() * history.getSell();
+                    operationDto.setLastValue(lastValue);
+                    operationDto.setLastValueDate(dataConverter.toString(history.getDate()));
 
-                History history = historyService.findLatestByCode(operation.getCurrency().getCode());
-                Double lastValue = operation.getAmount() * history.getSell();
-                operationDto.setLastValue(lastValue);
-                operationDto.setLastValueDate(dataConverter.toString(history.getDate()));
-
-                operationDtos.add(operationDto);
-            });
-            response.setData(operationDtos);
-            return ResponseEntity.ok(response);
-        } else {
-            response.setError("Operação não autorizada!");
-            return ResponseEntity.badRequest().body(response);
+                    operationDtos.add(operationDto);
+                });
+                response.setData(operationDtos);
+                return ResponseEntity.ok(response);
+            }
         }
+        response.setError("Operação não autorizada!");
+        return ResponseEntity.badRequest().body(response);
     }
 
     @GetMapping(value = "/simulate")
