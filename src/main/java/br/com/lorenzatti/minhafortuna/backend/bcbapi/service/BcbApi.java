@@ -134,7 +134,6 @@ public class BcbApi {
                 return ret;
             });
         } catch (Exception e) {
-            logger.info("Referencias nao disponiveis para " + url);
         }
         return file;
     }
