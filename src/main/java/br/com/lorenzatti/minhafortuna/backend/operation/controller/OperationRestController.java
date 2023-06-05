@@ -134,8 +134,7 @@ public class OperationRestController {
                     Optional<History> historyOpt = Optional.ofNullable(historyService.findLatestByCode(operation.getCurrency().getCode()));
                     if (historyOpt.isPresent()) {
                         History history = historyOpt.get();
-                        Double lastValue = operation.getAmount() * history.getSell();
-                        operationDto.setLastValue(lastValue);
+                        operationDto.setLastValue(history.getBuy());
                         operationDto.setLastValueDate(dataConverter.toString(history.getDate()));
                     }
 
