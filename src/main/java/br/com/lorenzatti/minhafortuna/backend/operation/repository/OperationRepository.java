@@ -11,4 +11,7 @@ public interface OperationRepository extends JpaRepository<Operation, Long> {
 
     List<Operation> findAllByUserIdAndOperationTypeInAndDateBetweenOrderByDateDesc(Long userId, List<EnumOperationType> type, Date startDate, Date endDate);
 
+    Integer countByExchangeId(Long id);
+
+    Integer countByCurrencyCode(String code);
 }

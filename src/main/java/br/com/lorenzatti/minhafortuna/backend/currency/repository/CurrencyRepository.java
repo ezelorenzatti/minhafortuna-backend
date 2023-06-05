@@ -10,5 +10,5 @@ public interface CurrencyRepository extends JpaRepository<Currency, String> {
     Currency findByCode(String code);
     List<Currency> findAll();
     List<Currency> findAllByUserId(Long id);
-    List<Currency> findCurrenciesByCustomIs(Boolean isCustom);
+    List<Currency> findCurrenciesByAllowChangeIs(Boolean isAllowChange);
 }

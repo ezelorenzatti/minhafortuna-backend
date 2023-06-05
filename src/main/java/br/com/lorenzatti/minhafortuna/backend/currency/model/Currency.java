@@ -21,8 +21,8 @@ public class Currency {
     @Column(name = "NAME")
     private String name;
 
-    @Column(name = "IS_CUSTOM")
-    private Boolean custom;
+    @Column(name = "IS_ALLOW_CHANGE")
+    private Boolean allowChange;
 
     @Column(name = "COLOR")
     private String color;
@@ -36,7 +36,7 @@ public class Currency {
         return "Currency{" +
                 "code='" + code + '\'' +
                 ", name='" + name + '\'' +
-                ", custom=" + custom +
+                ", allowChange=" + allowChange +
                 ", color='" + color + '\'' +
                 ", user=" + user +
                 '}';

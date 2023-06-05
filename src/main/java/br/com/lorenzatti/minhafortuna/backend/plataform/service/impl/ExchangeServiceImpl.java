@@ -3,9 +3,13 @@ package br.com.lorenzatti.minhafortuna.backend.plataform.service.impl;
 import br.com.lorenzatti.minhafortuna.backend.plataform.model.Exchange;
 import br.com.lorenzatti.minhafortuna.backend.plataform.repository.ExchangeRepository;
 import br.com.lorenzatti.minhafortuna.backend.plataform.service.ExchangeService;
+import br.com.lorenzatti.minhafortuna.backend.shared.utils.Utils;
+import br.com.lorenzatti.minhafortuna.backend.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +20,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     private ExchangeRepository exchangeRepository;
 
     @Override
-    public Optional<Exchange> getExchangeById(Long exchangeId) {
+    public Optional<Exchange> findById(Long exchangeId) {
         return Optional.ofNullable(exchangeRepository.getById(exchangeId));
     }
 
@@ -28,5 +32,34 @@ public class ExchangeServiceImpl implements ExchangeService {
     @Override
     public List<Exchange> exchanges() {
         return exchangeRepository.findAll();
+    }
+
+    @Override
+    public List<Exchange> findByUserId(Long userId){
+        return exchangeRepository.findByUserId(userId);
+    }
+
+    @Override
+    public void delete(Exchange exchange) {
+        exchangeRepository.delete(exchange);
+    }
+
+    @Override
+    public void simulate(User user) {
+        List<String> names = Arrays.asList("Empresa Internacional de Cambio", "Banco Inter", "Banco Bradesco", "XP Corretora", "Banco do Brasil");
+        List<String> sortedNames = new ArrayList<>();
+        while (sortedNames.size() < 2) {
+            String name = Utils.selectRandomString(names);
+            if (!sortedNames.contains(name)) {
+                sortedNames.add(name);
+            }
+        }
+
+        for (String name : sortedNames) {
+            Exchange exchange = new Exchange();
+            exchange.setName(name);
+            exchange.setUser(user);
+            exchangeRepository.save(exchange);
+        }
     }
 }

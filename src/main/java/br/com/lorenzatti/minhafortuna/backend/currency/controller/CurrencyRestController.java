@@ -3,7 +3,8 @@ package br.com.lorenzatti.minhafortuna.backend.currency.controller;
 import br.com.lorenzatti.minhafortuna.backend.currency.dto.CurrencyDto;
 import br.com.lorenzatti.minhafortuna.backend.currency.model.Currency;
 import br.com.lorenzatti.minhafortuna.backend.currency.service.impl.CurrencyServiceImpl;
-import br.com.lorenzatti.minhafortuna.backend.restcountries.service.RestCountriesApi;
+import br.com.lorenzatti.minhafortuna.backend.operation.dto.OperationDto;
+import br.com.lorenzatti.minhafortuna.backend.operation.service.OperationService;
 import br.com.lorenzatti.minhafortuna.backend.security.JwtUser;
 import br.com.lorenzatti.minhafortuna.backend.shared.response.Response;
 import br.com.lorenzatti.minhafortuna.backend.user.model.User;
@@ -28,7 +29,7 @@ public class CurrencyRestController {
     private UserService userService;
 
     @Autowired
-    private RestCountriesApi restCountriesApi;
+    private OperationService operationService;
 
     @GetMapping()
     public ResponseEntity<Response> getCurrencies(Authentication authentication) {
@@ -36,18 +37,19 @@ public class CurrencyRestController {
         JwtUser loggedUser = (JwtUser) authentication.getPrincipal();
         Optional<User> userOpt = userService.getUserById(loggedUser.getId());
         if (userOpt.isPresent()) {
-            response.setSuccess(true);
             List<CurrencyDto> currenciesDto = new ArrayList<>();
-            List<Currency> defaultCurrencies = currencyService.getCurrenciesDefaultCurrencies();
             List<Currency> customCurrencies = currencyService.getCurrenciesByUserId(loggedUser.getId());
-            defaultCurrencies.addAll(customCurrencies);
-            defaultCurrencies.forEach(currency -> {
+            List<Currency> defaultCurrencies = currencyService.getCurrenciesDefaultCurrencies();
+            customCurrencies.addAll(defaultCurrencies);
+            customCurrencies.forEach(currency -> {
                 CurrencyDto currencyDto = new CurrencyDto();
                 currencyDto.setCode(currency.getCode());
                 currencyDto.setName(currency.getName());
-                currencyDto.setCustom(currency.getCustom());
+                currencyDto.setColor(currency.getColor());
+                currencyDto.setAllowChange(currency.getAllowChange());
                 currenciesDto.add(currencyDto);
             });
+            response.setSuccess(true);
             response.setData(currenciesDto);
             return ResponseEntity.ok(response);
         } else {
@@ -65,7 +67,8 @@ public class CurrencyRestController {
             Currency currency = new Currency();
             currency.setName(currencyDto.getName());
             currency.setCode(currencyDto.getCode());
-            currency.setCustom(true);
+            currency.setColor(currencyDto.getColor());
+            currency.setAllowChange(true);
             currency.setUser(userOpt.get());
             currencyService.save(currency);
 
@@ -78,19 +81,58 @@ public class CurrencyRestController {
         }
     }
 
-    @GetMapping(value = "/fill")
-    public ResponseEntity<Response> fill() {
-        Response<List<String>> response = new Response<>();
-        try {
-            restCountriesApi.fill();
-            response.setSuccess(true);
-            response.setMessage("Moedas atualizadas!");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setError("Falha ao obter moedas");
-            return ResponseEntity.badRequest().body(response);
+
+    @GetMapping(value = "/{code}")
+    public ResponseEntity<Response> getByCode(@PathVariable String code, Authentication authentication) {
+        Response<CurrencyDto> response = new Response<>();
+
+        JwtUser loggedUser = (JwtUser) authentication.getPrincipal();
+        Optional<User> userOpt = userService.getUserById(loggedUser.getId());
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            Optional<Currency> currencyOpt = currencyService.findByCode(code);
+            if (currencyOpt.isPresent()) {
+                Currency currency = currencyOpt.get();
+                if (!currency.getUser().getId().equals(user.getId())) {
+                    response.setError("Operação não autorizada!");
+                    return ResponseEntity.badRequest().body(response);
+                }
+                CurrencyDto currencyDto = new CurrencyDto();
+                currencyDto.setName(currency.getName());
+                currencyDto.setCode(currency.getCode());
+                currencyDto.setColor(currency.getColor());
+                currencyDto.setAllowChange(currency.getAllowChange());
+                currencyDto.setIsUsed(operationService.countByCurrencyCode(code) > 0);
+
+                response.setData(currencyDto);
+                response.setSuccess(true);
+                return ResponseEntity.ok(response);
+            }
         }
+        response.setError("Operação não autorizada!");
+        return ResponseEntity.badRequest().body(response);
     }
 
+    @PostMapping(value = "/delete/{code}")
+    public ResponseEntity<Response> deleteById(@PathVariable String code, Authentication authentication) {
+        Response<OperationDto> response = new Response<>();
+
+        JwtUser loggedUser = (JwtUser) authentication.getPrincipal();
+        Optional<User> userOpt = userService.getUserById(loggedUser.getId());
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            Optional<Currency> currencyOpt = currencyService.findByCode(code);
+            if (currencyOpt.isPresent()) {
+                Currency currency = currencyOpt.get();
+                if (!currency.getUser().getId().equals(user.getId())) {
+                    response.setError("Operação não autorizada!");
+                    return ResponseEntity.badRequest().body(response);
+                }
+                currencyService.delete(currency);
+                return ResponseEntity.noContent().build();
+            }
+        }
+        response.setError("Operação não autorizada!");
+        return ResponseEntity.badRequest().body(response);
+    }
 }

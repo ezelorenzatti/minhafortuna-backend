@@ -13,5 +13,7 @@ public interface CurrencyService {
 
     List<Currency> getCurrenciesDefaultCurrencies();
 
-    Optional<Currency> getCurrenciesById(String currencyCode);
+    Optional<Currency> findByCode(String code);
+
+    void delete(Currency currency);
 }

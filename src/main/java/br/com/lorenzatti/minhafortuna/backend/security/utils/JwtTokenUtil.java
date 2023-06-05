@@ -18,6 +18,7 @@ public class JwtTokenUtil {
     static final String CLAIM_KEY_USERNAME = "sub";
     static final String CLAIM_KEY_CREATED = "created";
     static final String CLAIM_KEY_NAME = "name";
+    static final String CLAiM_FIRST_ACCESS = "first_access";
 
     @Value("${jwt.secret}")
     private String secret;
@@ -79,6 +80,7 @@ public class JwtTokenUtil {
         claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
         claims.put(CLAIM_KEY_CREATED, new Date());
         claims.put(CLAIM_KEY_NAME, user.getName());
+        claims.put(CLAiM_FIRST_ACCESS, user.getLastLogin() == null);
         return buildToken(claims);
     }
 

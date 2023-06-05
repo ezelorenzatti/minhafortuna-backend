@@ -42,5 +42,8 @@ public class User implements Serializable {
     @Column(name = "UPATED_DATE")
     private Date updateDate;
 
+    @Column(name = "LAST_LOGIN_DATE")
+    private Date lastLogin;
+
 }
 

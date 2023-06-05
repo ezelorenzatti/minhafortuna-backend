@@ -1,11 +1,12 @@
 package br.com.lorenzatti.minhafortuna.backend.bcbapi.service;
 
+import br.com.lorenzatti.minhafortuna.backend.bcbapi.dto.BCBCurrency;
+import br.com.lorenzatti.minhafortuna.backend.bcbapi.dto.BCBREsponse;
 import br.com.lorenzatti.minhafortuna.backend.currency.model.Currency;
 import br.com.lorenzatti.minhafortuna.backend.currency.repository.CurrencyRepository;
 import br.com.lorenzatti.minhafortuna.backend.history.model.History;
 import br.com.lorenzatti.minhafortuna.backend.history.repository.HistoryRepository;
-import br.com.lorenzatti.minhafortuna.backend.shared.exception.DataParseException;
-import br.com.lorenzatti.minhafortuna.backend.shared.utils.DataUtils;
+import br.com.lorenzatti.minhafortuna.backend.shared.utils.Utils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,10 +52,12 @@ public class BcbApi {
 
     private static final String URL_DAILY_VALUES = "https://www4.bcb.gov.br/Download/fechamento/{DATA}.csv";
 
-    @Scheduled(cron = "0 3 0 * * *", zone = TIME_ZONE)
+    private static final String CURRENCIES = "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/Moedas?%24format=json";
+
+    @Scheduled(cron = "0 5 0 * * *", zone = TIME_ZONE)
     public void updateDailyValues() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        final Date date = this.getDayBefore();
+        final Date date = Utils.getDayBefore();
         try {
             logger.info("Iniciando atualizacaoo de referencias monetarias para " + sdf.format(date));
             Optional<File> dailyValues = Optional.ofNullable(downloadFile(date));
@@ -66,9 +69,17 @@ public class BcbApi {
         }
     }
 
+    public List<BCBCurrency> getCurrencies(){
+        RestTemplate restTemplate = getRestTemplate();
+        BCBREsponse bcbrEsponse = restTemplate.getForEntity(CURRENCIES, BCBREsponse.class).getBody();
+        return bcbrEsponse.getValue();
+    }
+
+
+
     public void updatePeriodValues(Date startDate, Date endDate) throws Exception {
         Date current = startDate;
-        while (current.getTime() < endDate.getTime()) {
+        while (current.getTime() <= endDate.getTime()) {
             Optional<File> dailyValues = Optional.ofNullable(downloadFile(current));
             if(dailyValues.isPresent()){
                 importDailyValues(dailyValues.get());
@@ -131,15 +142,6 @@ public class BcbApi {
     private String getUrl(Date date, String url) {
         SimpleDateFormat sdf = new SimpleDateFormat(PATTERN);
         return url.replace("{DATA}", sdf.format(date));
-    }
-
-    private Date getDayBefore() {
-        Date data = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(data);
-        calendar.add(Calendar.DATE, -1);
-        data = calendar.getTime();
-        return data;
     }
 
     private static RestTemplate getRestTemplate() {

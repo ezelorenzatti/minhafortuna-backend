@@ -37,16 +37,13 @@ public class Operation implements Serializable {
     private Currency currency;
 
     @Column(name = "AMOUNT")
-    private Integer amount;
+    private Double amount;
 
     @Column(name = "UNIT_VALUE")
     private Double unitValue;
 
     @Column(name = "TOTAL")
     private Double total;
-
-    @Column(name = "TAXES")
-    private Double taxes;
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
     @JoinColumn(name = "USER_ID")

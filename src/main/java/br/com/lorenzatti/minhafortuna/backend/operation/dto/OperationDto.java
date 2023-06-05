@@ -16,10 +16,9 @@ public class OperationDto {
     private EnumOperationType operationType;
     private String currencyCode;
     private String currencyName;
-    private Integer amount;
+    private Double amount;
     private Double unitValue;
     private Double total;
-    private Double taxes;
     private Long exchangeId;
     private String exchangeName;
     private String color;

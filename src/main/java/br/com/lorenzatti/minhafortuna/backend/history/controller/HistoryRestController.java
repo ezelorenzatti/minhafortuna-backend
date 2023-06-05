@@ -4,7 +4,6 @@ import br.com.lorenzatti.minhafortuna.backend.bcbapi.service.BcbApi;
 import br.com.lorenzatti.minhafortuna.backend.history.dto.HistoryDto;
 import br.com.lorenzatti.minhafortuna.backend.history.model.History;
 import br.com.lorenzatti.minhafortuna.backend.history.service.HistoryService;
-import br.com.lorenzatti.minhafortuna.backend.restcountries.service.RestCountriesApi;
 import br.com.lorenzatti.minhafortuna.backend.shared.converter.DataConverter;
 import br.com.lorenzatti.minhafortuna.backend.shared.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +29,6 @@ public class HistoryRestController {
 
     @Autowired
     private BcbApi bcbApi;
-
-    @Autowired
-    private RestCountriesApi restCountriesApi;
 
     @GetMapping
     public ResponseEntity<Response> history(@RequestParam(name = "code") String code, @RequestParam(name = "start") String start, @RequestParam(name = "end") String end) {
@@ -69,7 +65,6 @@ public class HistoryRestController {
             return ResponseEntity.badRequest().body(response);
         }
     }
-
 
 
 }

@@ -10,5 +10,6 @@ public class JwtAuthenticationDto {
 
     private String email;
     private String password;
+    private Boolean simulateData = Boolean.FALSE;
 
 }

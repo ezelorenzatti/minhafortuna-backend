@@ -2,6 +2,7 @@ package br.com.lorenzatti.minhafortuna.backend.operation.service;
 
 import br.com.lorenzatti.minhafortuna.backend.operation.enums.EnumOperationType;
 import br.com.lorenzatti.minhafortuna.backend.operation.model.Operation;
+import br.com.lorenzatti.minhafortuna.backend.user.model.User;
 
 import java.util.Date;
 import java.util.List;
@@ -16,4 +17,11 @@ public interface OperationService {
     Optional<Operation> findById(Long id);
 
     void delete(Operation operation);
+
+    Integer countByExchangeId(Long id);
+
+    Integer countByCurrencyCode(String code);
+
+    void simulate(Date start, Date end, Integer operations, User user);
+
 }

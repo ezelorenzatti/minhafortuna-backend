@@ -10,8 +10,8 @@ import lombok.Setter;
 public class CurrencyDto {
 
     private String name;
-
     private String code;
-
-    private Boolean custom;
+    private String color;
+    private Boolean allowChange;
+    private Boolean isUsed;
 }

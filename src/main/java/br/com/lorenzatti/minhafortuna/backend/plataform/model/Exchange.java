@@ -1,5 +1,6 @@
 package br.com.lorenzatti.minhafortuna.backend.plataform.model;
 
+import br.com.lorenzatti.minhafortuna.backend.user.model.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,8 +23,12 @@ public class Exchange implements Serializable {
     @Column(name = "NAME", nullable = false)
     private String name;
 
-    @Column(name = "URL", nullable = false)
+    @Column(name = "URL")
     private String url;
+
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
+    @JoinColumn(name = "USER_ID")
+    private User user;
 
     @Override
     public String toString() {
@@ -31,6 +36,7 @@ public class Exchange implements Serializable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", url='" + url + '\'' +
+                ", user=" + user +
                 '}';
     }
 }

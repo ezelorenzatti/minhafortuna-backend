@@ -1,5 +1,7 @@
 package br.com.lorenzatti.minhafortuna.backend.security.controllers;
 
+import br.com.lorenzatti.minhafortuna.backend.operation.service.OperationService;
+import br.com.lorenzatti.minhafortuna.backend.plataform.service.ExchangeService;
 import br.com.lorenzatti.minhafortuna.backend.security.JwtUser;
 import br.com.lorenzatti.minhafortuna.backend.security.JwtUserFactory;
 import br.com.lorenzatti.minhafortuna.backend.security.dto.JwtAuthenticationDto;
@@ -7,6 +9,7 @@ import br.com.lorenzatti.minhafortuna.backend.security.dto.SignUpDto;
 import br.com.lorenzatti.minhafortuna.backend.security.dto.TokenDto;
 import br.com.lorenzatti.minhafortuna.backend.security.utils.JwtTokenUtil;
 import br.com.lorenzatti.minhafortuna.backend.shared.response.Response;
+import br.com.lorenzatti.minhafortuna.backend.shared.utils.Utils;
 import br.com.lorenzatti.minhafortuna.backend.user.model.User;
 import br.com.lorenzatti.minhafortuna.backend.user.service.UserService;
 import org.slf4j.Logger;
@@ -44,6 +47,12 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ExchangeService exchangeService;
+
+    @Autowired
+    private OperationService operationService;
+
     @PostMapping(value = "/signin")
     public ResponseEntity<Response<TokenDto>> signIn(@RequestBody JwtAuthenticationDto authenticationDto) throws AuthenticationException {
         Response<TokenDto> response = new Response<TokenDto>();
@@ -63,6 +72,17 @@ public class AuthenticationController {
                 authenticationDto.getEmail(), authenticationDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        if (authenticationDto.getSimulateData()) {
+            try {
+                exchangeService.simulate(user);
+                Date startDate = Utils.toDate("2023-01-01");
+                Date endDate = new Date();
+                operationService.simulate(startDate, endDate, 100, user);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         String token = jwtTokenUtil.getToken(userDetails, user);
         response.setData(new TokenDto(token));
 
@@ -74,7 +94,7 @@ public class AuthenticationController {
         Optional<User> userOpt = userService.findByEmail(signUpDto.getEmail());
         Response<TokenDto> response = new Response<TokenDto>();
         if (userOpt.isPresent()) {
-            response.setError("Não foi possível cadastra, email já utilizado !");
+            response.setError("Não foi possível cadastraR, email já utilizado!");
             return ResponseEntity.badRequest().body(response);
         } else {
             if (!signUpDto.getPassword().equals(signUpDto.getConfirmPassword())) {

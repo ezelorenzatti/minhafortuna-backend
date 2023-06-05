@@ -16,22 +16,27 @@ public class CurrencyServiceImpl implements CurrencyService {
     private CurrencyRepository currencyRepository;
 
     @Override
-    public Optional<Currency> getCurrenciesById(String currencyCode) {
-        return Optional.ofNullable(currencyRepository.getById(currencyCode));
-    }
-
-    @Override
     public List<Currency> getCurrenciesByUserId(Long id) {
         return currencyRepository.findAllByUserId(id);
     }
 
     @Override
     public List<Currency> getCurrenciesDefaultCurrencies() {
-        return currencyRepository.findCurrenciesByCustomIs(false);
+        return currencyRepository.findCurrenciesByAllowChangeIs(false);
     }
 
     @Override
     public Currency save(Currency currency) {
         return currencyRepository.save(currency);
+    }
+
+    @Override
+    public Optional<Currency> findByCode(String code) {
+        return Optional.ofNullable(currencyRepository.findByCode(code));
+    }
+
+    @Override
+    public void delete(Currency currency) {
+        currencyRepository.delete(currency);
     }
 }
