@@ -69,6 +69,11 @@ public class OperationServiceImpl implements OperationService {
     }
 
     @Override
+    public void deleteByUserId(Long id) {
+        operationRepository.deleteByUserId(id);
+    }
+
+    @Override
     public void simulate(Date start, Date end, Integer operations, User user) {
         Integer count = 0;
         Integer failCount = 0;

@@ -24,4 +24,5 @@ public interface OperationService {
 
     void simulate(Date start, Date end, Integer operations, User user);
 
+    void deleteByUserId(Long id);
 }

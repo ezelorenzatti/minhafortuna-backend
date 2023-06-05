@@ -9,4 +9,5 @@ public interface ExchangeRepository extends JpaRepository<Exchange, Long> {
 
     List<Exchange> findByUserId(Long userId);
 
+    void deleteByUserId(Long id);
 }

@@ -16,4 +16,6 @@ public interface CurrencyService {
     Optional<Currency> findByCode(String code);
 
     void delete(Currency currency);
+
+    void deleteByUserId(Long id);
 }

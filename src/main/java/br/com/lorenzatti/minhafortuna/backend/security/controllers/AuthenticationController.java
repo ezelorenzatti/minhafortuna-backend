@@ -94,11 +94,11 @@ public class AuthenticationController {
         Optional<User> userOpt = userService.findByEmail(signUpDto.getEmail());
         Response<TokenDto> response = new Response<TokenDto>();
         if (userOpt.isPresent()) {
-            response.setError("Não foi possível cadastraR, email já utilizado!");
+            response.setError("Não foi possível cadastrar, email já utilizado!");
             return ResponseEntity.badRequest().body(response);
         } else {
             if (!signUpDto.getPassword().equals(signUpDto.getConfirmPassword())) {
-                response.setError("Não foi possível cadastrar, senha e confirmação de senha inválidas !");
+                response.setError("Não foi possível cadastrar, senha e confirmação de senha inválidas!");
                 return ResponseEntity.badRequest().body(response);
             }
 

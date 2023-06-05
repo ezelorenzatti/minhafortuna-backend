@@ -14,4 +14,6 @@ public interface OperationRepository extends JpaRepository<Operation, Long> {
     Integer countByExchangeId(Long id);
 
     Integer countByCurrencyCode(String code);
+
+    void deleteByUserId(Long id);
 }

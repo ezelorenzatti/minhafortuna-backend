@@ -45,6 +45,11 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     @Override
+    public void deleteByUserId(Long id) {
+        exchangeRepository.deleteByUserId(id);
+    }
+
+    @Override
     public void simulate(User user) {
         List<String> names = Arrays.asList("Empresa Internacional de Cambio", "Banco Inter", "Banco Bradesco", "XP Corretora", "Banco do Brasil");
         List<String> sortedNames = new ArrayList<>();

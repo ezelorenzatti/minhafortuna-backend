@@ -19,4 +19,6 @@ public interface ExchangeService {
     void simulate(User user);
 
     void delete(Exchange exchange);
+
+    void deleteByUserId(Long id);
 }
