@@ -36,7 +36,13 @@ public class UserRestController {
                     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
                     user.setPassword(passwordEncoder.encode(userDto.getPassword()));
                 }
+            } else {
+                Optional<User> userOpt = userService.getUserById(userDto.getId());
+                if(userOpt.isPresent()){
+                    user = userOpt.get();
+                }
             }
+
             user.setId(userDto.getId());
             user.setName(userDto.getName());
             user.setEmail(userDto.getEmail());

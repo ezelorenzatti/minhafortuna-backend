@@ -1,4 +1,4 @@
-package br.com.lorenzatti.minhafortuna.backend.plataform.model;
+package br.com.lorenzatti.minhafortuna.backend.exchange.model;
 
 import br.com.lorenzatti.minhafortuna.backend.user.model.User;
 import lombok.Getter;

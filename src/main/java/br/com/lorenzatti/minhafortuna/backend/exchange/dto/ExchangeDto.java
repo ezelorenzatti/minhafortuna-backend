@@ -1,4 +1,4 @@
-package br.com.lorenzatti.minhafortuna.backend.plataform.dto;
+package br.com.lorenzatti.minhafortuna.backend.exchange.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

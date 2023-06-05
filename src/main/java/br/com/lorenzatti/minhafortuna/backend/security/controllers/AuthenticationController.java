@@ -1,7 +1,7 @@
 package br.com.lorenzatti.minhafortuna.backend.security.controllers;
 
 import br.com.lorenzatti.minhafortuna.backend.operation.service.OperationService;
-import br.com.lorenzatti.minhafortuna.backend.plataform.service.ExchangeService;
+import br.com.lorenzatti.minhafortuna.backend.exchange.service.ExchangeService;
 import br.com.lorenzatti.minhafortuna.backend.security.JwtUser;
 import br.com.lorenzatti.minhafortuna.backend.security.JwtUserFactory;
 import br.com.lorenzatti.minhafortuna.backend.security.dto.JwtAuthenticationDto;

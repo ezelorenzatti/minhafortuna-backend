@@ -1,8 +1,8 @@
-package br.com.lorenzatti.minhafortuna.backend.plataform.service.impl;
+package br.com.lorenzatti.minhafortuna.backend.exchange.service.impl;
 
-import br.com.lorenzatti.minhafortuna.backend.plataform.model.Exchange;
-import br.com.lorenzatti.minhafortuna.backend.plataform.repository.ExchangeRepository;
-import br.com.lorenzatti.minhafortuna.backend.plataform.service.ExchangeService;
+import br.com.lorenzatti.minhafortuna.backend.exchange.model.Exchange;
+import br.com.lorenzatti.minhafortuna.backend.exchange.repository.ExchangeRepository;
+import br.com.lorenzatti.minhafortuna.backend.exchange.service.ExchangeService;
 import br.com.lorenzatti.minhafortuna.backend.shared.utils.Utils;
 import br.com.lorenzatti.minhafortuna.backend.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;

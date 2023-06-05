@@ -1,6 +1,6 @@
-package br.com.lorenzatti.minhafortuna.backend.plataform.service;
+package br.com.lorenzatti.minhafortuna.backend.exchange.service;
 
-import br.com.lorenzatti.minhafortuna.backend.plataform.model.Exchange;
+import br.com.lorenzatti.minhafortuna.backend.exchange.model.Exchange;
 import br.com.lorenzatti.minhafortuna.backend.user.model.User;
 
 import java.util.List;

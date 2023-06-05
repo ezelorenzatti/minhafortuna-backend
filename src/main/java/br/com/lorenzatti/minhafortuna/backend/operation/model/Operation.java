@@ -2,7 +2,7 @@ package br.com.lorenzatti.minhafortuna.backend.operation.model;
 
 import br.com.lorenzatti.minhafortuna.backend.currency.model.Currency;
 import br.com.lorenzatti.minhafortuna.backend.operation.enums.EnumOperationType;
-import br.com.lorenzatti.minhafortuna.backend.plataform.model.Exchange;
+import br.com.lorenzatti.minhafortuna.backend.exchange.model.Exchange;
 import br.com.lorenzatti.minhafortuna.backend.user.model.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,9 +1,9 @@
-package br.com.lorenzatti.minhafortuna.backend.plataform.controller;
+package br.com.lorenzatti.minhafortuna.backend.exchange.controller;
 
 import br.com.lorenzatti.minhafortuna.backend.operation.service.OperationService;
-import br.com.lorenzatti.minhafortuna.backend.plataform.dto.ExchangeDto;
-import br.com.lorenzatti.minhafortuna.backend.plataform.model.Exchange;
-import br.com.lorenzatti.minhafortuna.backend.plataform.service.ExchangeService;
+import br.com.lorenzatti.minhafortuna.backend.exchange.dto.ExchangeDto;
+import br.com.lorenzatti.minhafortuna.backend.exchange.model.Exchange;
+import br.com.lorenzatti.minhafortuna.backend.exchange.service.ExchangeService;
 import br.com.lorenzatti.minhafortuna.backend.security.JwtUser;
 import br.com.lorenzatti.minhafortuna.backend.shared.response.Response;
 import br.com.lorenzatti.minhafortuna.backend.user.model.User;
