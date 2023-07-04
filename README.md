@@ -25,4 +25,4 @@ java -jar build\libs\minhafortuna-backend-0.0.1-SNAPSHOT.jar
 
 
 esse projeto funciona em paralelo ao frontend localizado em
-https://bitbucket.org/ezequiellorenzatti/minhafortuna-frontend
+https://github.com/ezelorenzatti/minhafortuna-frontend
